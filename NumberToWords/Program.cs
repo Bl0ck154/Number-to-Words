@@ -43,7 +43,7 @@ namespace NumberToWords
 
 			AmountToWords amountToWords = new AmountToWords(rus, currency);
 
-			Console.WriteLine(amountToWords.Convert(123163341,13));
+			Console.WriteLine(amountToWords.Convert(123003341,13));
 
 			Console.ReadKey();
 		}

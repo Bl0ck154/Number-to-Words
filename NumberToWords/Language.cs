@@ -36,40 +36,26 @@ namespace NumberToWords
 		{
 			string ending = "";
 			string strVal = value.ToString();
+			char prevEndingChar = strVal.Length == 1 ? ' ' : strVal[strVal.Length - 2];
 			char endingChar = strVal[strVal.Length - 1];
-			if (hundreds >= 1000000)
+
+			if (hundreds >= 1000)
 			{
-				switch (endingChar)
+				bool limons = (hundreds >= 1000000);
+				if (endingChar == '1' && prevEndingChar != '1')
 				{
-					case '1':
-						break;
-					case '2':
-					case '3':
-					case '4':
-						ending = "а";
-						break;
-					default:
-						ending = "ов";
-						break;
+					ending = limons ? "" : "а";
+				}
+				else if(endingChar >= '2' && endingChar <= '4' && prevEndingChar != '1')
+				{
+					ending = limons ? "а" : "и";
+				}
+				else
+				{
+					ending = limons ? "ов" : "";
 				}
 			}
-			else if (hundreds >= 1000)
-			{
-				switch (endingChar)
-				{
-					case '1':
-						ending = "а";
-						break;
-					case '2':
-					case '3':
-					case '4':
-						ending = "и";
-						break;
-					default:
-						ending = "";
-						break;
-				}
-			}
+
 			return ending;
 		}
 	}
