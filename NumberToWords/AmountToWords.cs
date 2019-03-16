@@ -15,17 +15,26 @@ namespace NumberToWords
 			this.language = language;
 			this.currency = currency;
 		}
-
-		public string Convert(int amount, int fraction)
+		public string Convert(int amount, int fraction, bool amountSheWord = false, bool fractionSheWord = false)
 		{
 			string whole = amount.ToString();
-			return GetWords(whole) + " рублей и " + GetWords(fraction.ToString()) + " копеек";
+			string fract = fraction.ToString();
+			return GetWords(whole, amountSheWord) + " " + language.GetCurrencyNameWithEnding(currency, amount) + " "
+				+ GetWords(fract, fractionSheWord) + " " + language.GetCurrencyNameWithEnding(currency, fraction, true) + " ";
 		}
-
-		private string GetWords(string input)
+		public string Convert(string amount, bool amountSheWord = false, bool fractionSheWord = false)
 		{
-			int i = 1;
-
+			string fraction = "";
+			if (amount.Contains("."))
+			{
+				fraction = amount.Substring(amount.IndexOf(".") + 1);
+				amount = amount.Remove(amount.IndexOf("."));
+			}
+			return Convert(int.Parse(amount), int.Parse(fraction), amountSheWord, fractionSheWord);
+		}
+		private string GetWords(string input, bool sheWord = false)
+		{
+			int multiplier = 1;
 			string words = "";
 
 			while (input.Length > 0)
@@ -36,21 +45,22 @@ namespace NumberToWords
 
 				int num = int.Parse(_3digits);
 				
-				_3digits = GetWord(num);
+				_3digits = GetWord(num, sheWord);
 
-				if (i > 1)
+				if (multiplier > 1)
 				{
-					_3digits += ' ' + language.Get(i);
-					_3digits += language.GetEnding(num, i) + ' ';
+					_3digits += ' ' + language.Get(multiplier);
+					_3digits += language.GetEnding(num, multiplier) + ' ';
 				}
 
 				words = _3digits + words;
 
-				i *= 1000;
+				multiplier *= 1000;
 			}
+
 			return words;
 		}
-		private string GetWord(int num)
+		private string GetWord(int num, bool sheWord = false)
 		{
 			string word = "";
 			int tmp;
@@ -58,20 +68,20 @@ namespace NumberToWords
 			if (num > 99 && num < 1000)
 			{
 				tmp = num / 100 * 100;
-				word += language.Get(tmp) + " ";
+				word += language.Get(tmp, sheWord) + " ";
 				num = num % 100;
 			}
 
 			if (num > 19 && num < 100)
 			{
 				tmp = num / 10 * 10;
-				word += language.Get(tmp) + " ";
+				word += language.Get(tmp, sheWord) + " ";
 				num = num % 10;
 			}
 
-			if (num > 0 && num < 20)
+			if (num >= 0 && num < 20)
 			{
-				word += language.Get(num);
+				word += language.Get(num, sheWord);
 			}
 
 			return word;
